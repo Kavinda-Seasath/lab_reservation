@@ -45,10 +45,16 @@ module.exports = (app) => {
         message: 'Error: Last name cannot be blank.'
       });
     }
+    if (!universityId) {
+      return res.send({
+        success: false,
+        message: 'Error: University ID cannot be blank.'
+      });
+    }
     if (!email) {
       return res.send({
         success: false,
-        message: 'Error: Email cannot be blank.'
+        message: 'Error: Email cannot be blank or invalid Email'
       });
     }
     if (!password) {

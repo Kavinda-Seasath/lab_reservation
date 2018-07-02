@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 
 const Header = () => (
   <header>
-    <nav  className="navbar navbar-inverse">
+    <nav style={{backgroundColor:'black'}} className="nav-fill col-lg-12">
         <div className="container-fluid">
-          <div className="navbar-header">
-            <Link to="/"><h1 className="navbar-brand text-white">Lab Reservation System</h1></Link>
+          <div className="">
+            <h1 style={{textAlign:'center',color:'white'}} >Lab Reservation System</h1>
           </div>
 
 

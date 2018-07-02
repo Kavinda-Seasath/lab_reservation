@@ -4,6 +4,8 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import axios from 'axios';
 
+import * as EmailValidator from 'email-validator';
+
 import {
   getFromStorage,
   setInStorage,
@@ -188,19 +190,27 @@ class Home extends Component {
   }
 
   onSignUp() {
+
     //grab state
     const {
       signUpFirstName,
       signUpLastName,
-      signUpEmail,
+
       signUpPassword,
       signUpUniversityId,
+    } = this.state;
+    let {
+      signUpEmail
     } = this.state;
 
     this.setState({
       isLoading: true,
     })
+    if(!(EmailValidator.validate(signUpEmail))){
 
+        signUpEmail = '';
+
+    }
     //post request to backend
     fetch('/api/account/signup', {
       method: 'POST',
@@ -252,6 +262,7 @@ class Home extends Component {
             this.setState({
               userLevelState: '',
               token: '',
+              signInError: '',
               isLoading: false
             });
           } else {
@@ -453,6 +464,7 @@ class Home extends Component {
       });
   }
 
+
  /* resurveDisable(e){
     let place = e.place;
     let time = e.time;
@@ -479,11 +491,22 @@ class Home extends Component {
     } = this.state;
 
     if (isLoading) {
-      return(<div><p>Loading...</p></div>);
+      return(
+            <div style={{backgroundColor:'#edb22a'}} className="col-lg-12" >
+                <p>
+                  <div className="col-md-4"> </div>
+                  <div className="col-md-8">
+                    <h1>Loading... Please wait</h1>
+                  </div>
+
+
+                </p>
+              <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            </div>);
     }
     if (!token) {
       return (
-        <div className="col-lg-12">
+        <div style={{backgroundColor:'#edb22a'}} className="col-lg-12">
           <br/>
           <br/>
           <br/>
@@ -496,7 +519,7 @@ class Home extends Component {
               <div className="col-md-4">
                 {
                   (signInError) ? (
-                    <p>{signInError}</p>
+                    <p className="alert alert-info">{signInError}</p>
                   ) :(null)
                 }
                 <h3><span>Sign in</span></h3>
@@ -511,7 +534,7 @@ class Home extends Component {
               <div className="col-md-4">
                 {
                   (signUpError) ? (
-                    <p>{signUpError}</p>
+                    <p className="alert alert-info">{signUpError}</p>
                   ) :(null)
                 }
                 <h3><span>Sign up</span></h3>
@@ -531,25 +554,28 @@ class Home extends Component {
 
     if((userLevelState === 'admin') && (this.state.userSearch === 'false')){
       return (
-        <div>
-          <div className="container-fluid col-lg-12">
-            <div className="col-sm-3">
+        <div style={{backgroundColor:'#dbc100'}} className='col-lg-12'><br/>
+          <div className="container-fluid">
+            <div style={{backgroundColor:'#7c4301'}} className='col-md-12'>
+              <div className="col-sm-3">
+              </div>
+              <div className="col-sm-6"> </div>
+              <div className="col-sm-3">
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={print}>Today Report</label>
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.searchUser}>search User</label>
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.logout}>Logout</label>
 
-            </div>
-            <div className="col-sm-8"> </div>
-            <div className="col-sm-1">
-              <button className="btn btn-warning" onClick={this.logout}>Logout</button>
-              <button className="btn btn-warning" onClick={this.searchUser}>search User</button>
-
+              </div>
             </div>
           </div>
+          <br/><br/>
           <div className="container-fluid">
 
             <div className="col-lg-12">
               <div className="col-md-4"> </div>
               <div className="col-md-6">
                 <div className="col-sm-4">
-                  <DatePicker isClearable={true} placeholderText="Select Date" selected={this.state.startDate} onChange={this.handleChange}/>
+                  <DatePicker className=" btn btn-Default btn-sm" isClearable={true} placeholderText="Select Date" selected={this.state.startDate} onChange={this.handleChange}/>
                 </div>
                 <div className="col-sm-4">
                   <button className="btn btn-primary btn-sm" onClick={this.addReservationDate}>Search</button>
@@ -566,13 +592,13 @@ class Home extends Component {
               {
                 this.state.labData.map(function(exp){
                   return (
-                    <table className="table">
+                    <table style={{backgroundColor: '#eff9db'}} className="table btn-sm">
                       <thead>
-                      <tr>
-                        <th colSpan="4" >LAB A</th><th colSpan="4">LAB B</th><th colSpan="4">LAB C</th>
+                      <tr  style={{backgroundColor: 'white'}} >
+                        <th colSpan="4" style={{textAlign:'center'}} >LAB A</th><th colSpan="4" style={{textAlign:'center'}}>LAB B</th><th colSpan="4" style={{textAlign:'center'}} >LAB C</th>
                       </tr>
-                      <tr>
-                        <th>time</th><th>Availability</th><th>reserve</th><th></th><th className='table-info'>time</th><th>Availability</th><th>reserve</th><th></th><th className='table-info'>time</th><th>Availability</th><th>reserve</th>
+                      <tr style={{backgroundColor: '#f1ffdb'}}>
+                        <th style={{textAlign:'center'}} >Time</th><th style={{textAlign:'center'}}>Availability</th><th style={{textAlign:'center'}}>Reserve</th><th></th ><th className='table-info' style={{textAlign:'center'}}>Time</th><th style={{textAlign:'center'}}>Availability</th><th style={{textAlign:'center'}}>Reserve</th><th></th><th className='table-info' style={{textAlign:'center'}}>Time</th><th style={{textAlign:'center'}}>Availability</th><th style={{textAlign:'center'}}>Reserve</th><th></th>
                       </tr>
                       </thead>
 
@@ -583,7 +609,7 @@ class Home extends Component {
                         <td>{exp.lab_a.a}</td>
                         <td>
                           <div className="col-md-6">
-                            <button onClick={(e) => this.bookTimeSlot({lab:'lab_a',slots:'a'},e)} className="btn btn-success btn-sm">reserve</button>
+                            <button onClick={(e) => this.bookTimeSlot({lab:'lab_a',slots:'a'},e)} className="btn btn-success btn-sm">Book</button>
                           </div>
                           <div className="col-md-6">
                             <button onClick={(e) => this.removeTimeSlotAdmin({lab:'lab_a',slots:'a'},e)} className="btn btn-danger btn-sm">Undo</button>
@@ -911,18 +937,22 @@ class Home extends Component {
 
     if((userLevelState === 'admin') && (this.state.userSearch === 'true')){
       return(
-        <div>
-          <div className="container-fluid col-lg-12">
-            <div className="col-sm-3">
+        <div style={{backgroundColor:'#dbc100'}} className='col-lg-12' ><br/>
+          <div className="container-fluid">
+            <div style={{backgroundColor:'#7c4301'}} className='col-md-12'>
+              <div className="col-sm-3">
 
-            </div>
-            <div className="col-sm-8"> </div>
-            <div className="col-sm-1">
-              <button className="btn btn-warning" onClick={this.logout}>Logout</button>
-              <button className="btn btn-warning" onClick={this.reservation}>Reservation</button>
+              </div>
+              <div className="col-sm-7"> </div>
+              <div className="col-sm-2">
 
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.reservation}>Reservation</label>
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.logout}>Logout</label>
+
+              </div>
             </div>
           </div>
+          <br/><br/>
           <div className="container-fluid col-lg-12">
             <div className="col-md-4"> </div>
             <div className="col-md-6">
@@ -936,22 +966,62 @@ class Home extends Component {
           </div>
           <br/>
           <br/>
-          <br/><br/><br/><br/><br/><br/><br/>
+          <br/><br/>
 
           {
             this.state.userData.map(function(exp){
               return (
           <div className="container-fluid col-lg-12">
             <div className="col-md-3"> </div>
-            <div className="col-md-6 modal-content">
+            <div className="col-md-6 modal-content" style={{backgroundColor:'#f1ffdb'}}>
               <br/><br/>
               <div className="col-sm-2"> </div>
               <div className="col-sm-10">
-                <label>first name  : </label><label>{exp.firstName}</label><br/>
-                <label>Last Name  : </label><label>{exp.lastName}</label><br/>
-                <label>Email  : </label><label>{exp.email}</label><br/>
-                <label>University ID  : </label><label>{exp.universityId}</label><br/>
-                <label>User Level  : </label><label>{exp.userLevel}</label><br/><br/><br/>
+                <div className='col-sm-12'>
+                  <div className='col-sm-6'>
+                    <h4><label className='label label-info'>first name  : </label></h4>
+                  </div>
+                  <div className='col-sm-6'>
+                    <h4><label  className='label label-default'>{exp.firstName}</label></h4><br/>
+                  </div>
+                </div>
+                <div className='col-sm-12'>
+                  <div className='col-sm-6'>
+                    <h4><label  className='label label-info'>Last Name  : </label></h4>
+                  </div>
+                  <div className='col-sm-6'>
+                    <h4><label className='label label-default'>{exp.lastName}</label></h4><br/>
+                  </div>
+                </div>
+                <div className='col-sm-12'>
+                  <div className='col-sm-6'>
+                    <h4><label  className='label label-info'>Email  : </label></h4>
+                  </div>
+                  <div className='col-sm-6'>
+                    <h4><label className='label label-default'>{exp.email}</label></h4><br/>
+                  </div>
+                </div>
+                <div className='col-sm-12'>
+                  <div className='col-sm-6'>
+                    <h4><label  className='label label-info'>University ID  : </label></h4>
+                  </div>
+                  <div className='col-sm-6'>
+                    <h4><label className='label label-default'>{exp.universityId}</label></h4><br/>
+                  </div>
+                </div>
+                <div className='col-sm-12'>
+                  <div className='col-sm-6'>
+                    <h4><label  className='label label-info'>User Level  : </label></h4>
+                  </div>
+                  <div className='col-sm-6'>
+                    <h4><label className='label label-default'>{exp.userLevel}</label></h4><br/>
+                  </div>
+                </div>
+
+
+
+                <br/>
+                <br/><br/><br/>
               </div>
 
 
@@ -959,7 +1029,7 @@ class Home extends Component {
           </div>
                 )}.bind(this)
             )}
-          <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+          <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
         </div>
       )
     }
@@ -967,23 +1037,29 @@ class Home extends Component {
 
     if(userLevelState === 'user'){
       return (
-        <div>
-          <div className="container-fluid col-lg-12">
+        <div style={{backgroundColor:'#dbc100'}} className="col-lg-12"><br/>
+          <div className="container-fluid">
+
+            <div style={{backgroundColor:'black'}} className='col-md-12'>
             <div className="col-sm-3">
 
             </div>
             <div className="col-sm-8"> </div>
             <div className="col-sm-1">
-              <button className="btn btn-warning" onClick={this.logout}>Logout</button>
+
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.logout}>Logout</label>
+
+            </div>
             </div>
           </div>
+          <br/><br/>
           <div className="container-fluid">
 
             <div className="col-lg-12">
               <div className="col-md-4"> </div>
               <div className="col-md-6">
                 <div className="col-sm-4">
-                  <DatePicker isClearable={true} placeholderText="Select Date" minDate={moment().startOf('day')} selected={this.state.startDate} onChange={this.handleChange}/>
+                  <DatePicker className=" btn btn-Default btn-sm" isClearable={true} placeholderText="Select Date" minDate={moment().startOf('day')} selected={this.state.startDate} onChange={this.handleChange}/>
                 </div>
                 <div className="col-sm-4">
                   <button className="btn btn-primary btn-sm" onClick={this.addReservationDate}>Search</button>
@@ -1000,13 +1076,13 @@ class Home extends Component {
               {
                 this.state.labData.map(function(exp){
                   return (
-                    <table className="table">
+                    <table style={{backgroundColor: '#eff9db'}} className="table btn-sm">
                       <thead>
-                      <tr>
-                        <th colSpan="4" >LAB A</th><th colSpan="4">LAB B</th><th colSpan="4">LAB C</th>
+                      <tr  style={{backgroundColor: 'white'}} >
+                        <th colSpan="4" style={{textAlign:'center'}} >LAB A</th><th colSpan="4" style={{textAlign:'center'}}>LAB B</th><th colSpan="4" style={{textAlign:'center'}} >LAB C</th>
                       </tr>
-                      <tr>
-                        <th>time</th><th>Availability</th><th>reserve</th><th></th><th className='table-info'>time</th><th>Availability</th><th>reserve</th><th></th><th className='table-info'>time</th><th>Availability</th><th>reserve</th>
+                      <tr style={{backgroundColor: '#f1ffdb'}}>
+                        <th style={{textAlign:'center'}} >Time</th><th style={{textAlign:'center'}}>Availability</th><th style={{textAlign:'center'}}>Reserve</th><th></th ><th className='table-info' style={{textAlign:'center'}}>Time</th><th style={{textAlign:'center'}}>Availability</th><th style={{textAlign:'center'}}>Reserve</th><th></th><th className='table-info' style={{textAlign:'center'}}>Time</th><th style={{textAlign:'center'}}>Availability</th><th style={{textAlign:'center'}}>Reserve</th><th></th>
                       </tr>
                       </thead>
 
