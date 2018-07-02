@@ -11,6 +11,7 @@ const App = ({ children }) => (
       {children}
     </main>
 
+    <br/>
     <Footer />
   </>
 );

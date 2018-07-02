@@ -20,6 +20,14 @@ const UserSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false
+  },
+  userLevel: {
+    type: String,
+    default: ''
+  },
+  universityId: {
+    type: String,
+    default: ''
   }
 });
 

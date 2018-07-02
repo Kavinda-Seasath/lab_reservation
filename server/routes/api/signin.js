@@ -25,7 +25,9 @@ module.exports = (app) => {
     const {
       firstName,
       lastName,
-      password
+      password,
+      userLevel,
+      universityId,
     } = body;
     let {
       email
@@ -83,7 +85,9 @@ module.exports = (app) => {
       newUser.email = email;
       newUser.firstName = firstName;
       newUser.lastName = lastName;
+      newUser.universityId = universityId;
       newUser.password =newUser.generateHash(password);
+      newUser.userLevel = userLevel;
       newUser.save((err, user) => {
         if(err) {
           return res.send({
@@ -153,6 +157,8 @@ module.exports = (app) => {
       const userSession = new UserSession();
       userSession.userId = user._id;
       userSession.username = user.firstName;
+      userSession.email = user.email;
+      userSession.userLevel = user.userLevel;
       userSession.save((err, doc) => {
         if (err) {
           return res.send({
@@ -163,7 +169,9 @@ module.exports = (app) => {
         return res.send({
           success: true,
           message: 'Sign in Successfull',
-          token: doc._id
+          token: doc._id,
+          cUser: doc.username,
+          uLevel: doc.userLevel,
         })
       });
 
@@ -198,7 +206,8 @@ module.exports = (app) => {
       } else {
         return res.send({
           success: true,
-          message: 'good'
+          message: 'good',
+          userLevel: sessions.userLevel
         });
       }
     });

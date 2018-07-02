@@ -17,6 +17,14 @@ const UserSessionSchema = new mongoose.Schema({
   username: {
     type:String,
     default: ''
+  },
+  email: {
+    type:String,
+    default: ''
+  },
+  userLevel: {
+    type:String,
+    default: ''
   }
 
 
