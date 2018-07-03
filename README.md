@@ -1,6 +1,6 @@
-# MERN-boilerplate
 
-This is a boilerplate project using the following technologies:
+
+This is a lab reservation project using the following technologies:
 - [React](https://facebook.github.io/react/) and [React Router](https://reacttraining.com/react-router/) for the frontend
 - [Express](http://expressjs.com/) and [Mongoose](http://mongoosejs.com/) for the backend
 - [Sass](http://sass-lang.com/) for styles (using the SCSS syntax)
@@ -31,3 +31,4 @@ Development (Webpack dev server) mode:
 ```shell
 npm run start:dev
 ```
+
