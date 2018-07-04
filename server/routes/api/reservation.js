@@ -205,6 +205,24 @@ module.exports = (app) => {
     });
   });
 
+
+  app.post('/api/account/delete', (req, res, next) => {
+
+    const {body} = req;
+    let {
+      emailOfUser
+    } = body;
+
+    emailOfUser = emailOfUser.toLowerCase();
+
+
+    User.find({email: emailOfUser}).remove().exec(function(err, result) {
+      if(err)
+        res.send(err)
+      res.send('User successfully deleted!');
+    })
+  });
+
 /*router.post('api/account/addreservation',function(req,res){
   var date = req.body.date;
   console.log(data);

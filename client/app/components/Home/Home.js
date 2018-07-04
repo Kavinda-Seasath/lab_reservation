@@ -16,9 +16,14 @@ class Home extends Component {
     super(props);
 
     this.state = {
+      print: '',
+
       userSearch: 'false',
       emailSearch: '',
       userData: [],
+      userDelete: '',
+
+      bookState: '',
 
       userLevelState: '',
       emailData: '',
@@ -61,6 +66,11 @@ class Home extends Component {
     this.reservation = this.reservation.bind(this);
     this.onBoxChangeHandleEmail = this.onBoxChangeHandleEmail.bind(this);
     this.searchUserData = this.searchUserData.bind(this);
+    this.deleteUserData = this.deleteUserData.bind(this);
+
+    this.delayState = this.delayState.bind(this);
+
+    this.printWindow = this.printWindow.bind(this);
 
   }
 
@@ -305,6 +315,13 @@ class Home extends Component {
       });
   }
 
+  delayState() {
+    setTimeout(() => {
+      this.setState({
+        bookState: ''
+      })
+    }, 2000);
+  }
 
   bookTimeSlot(e) {
     var _this = this;
@@ -338,6 +355,12 @@ class Home extends Component {
 
 
           }).then(function (response) {
+
+            _this.setState({
+              bookState:'Reservation successful'
+            });
+            _this.delayState();
+
 
             console.log(response);
             _this.addReservationDate();
@@ -377,6 +400,10 @@ class Home extends Component {
 
         }).then(function (response) {
 
+          _this.setState({
+            bookState:'Cancellation successful'
+          });
+          _this.delayState();
           console.log(response);
           _this.addReservationDate();
         })
@@ -412,6 +439,11 @@ class Home extends Component {
 
 
         }).then(function (response) {
+
+          _this.setState({
+            bookState:'Cancellation successful'
+          });
+          _this.delayState();
 
           console.log(response);
           _this.addReservationDate();
@@ -456,6 +488,7 @@ class Home extends Component {
 
       console.log(response);
 
+      _this.setState({userDelete: ''});
       _this.setState({userData: response.data});
 
     })
@@ -463,6 +496,43 @@ class Home extends Component {
         console.log(error);
       });
   }
+
+  deleteUserData() {
+    var _this = this;
+    axios.post('api/account/delete', {
+
+      emailOfUser: this.state.emailSearch,
+
+    }).then(function (response) {
+
+      console.log(response);
+      _this.setState({userDelete: response.data});
+      _this.setState({userData: []});
+
+
+
+    })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+
+
+  printWindow(){
+    this.setState({
+      print: 'true'
+    });
+
+    setTimeout(() => {
+      print();
+      this.setState({
+        print: 'false'
+      })
+    }, 500);
+
+  }
+
 
 
  /* resurveDisable(e){
@@ -475,6 +545,7 @@ class Home extends Component {
 
   render() {
     const {
+      bookState,
       emailSearch,
       userLevelState,
       isLoading,
@@ -488,15 +559,16 @@ class Home extends Component {
       signUpPassword,
       signUpUniversityId,
       signUpError,
+      userDelete,
     } = this.state;
 
     if (isLoading) {
       return(
-            <div style={{backgroundColor:'#edb22a'}} className="col-lg-12" >
+            <div style={{backgroundColor:'#edb22a'}} className="col-lg-12 loadimg" >
                 <p>
                   <div className="col-md-4"> </div>
                   <div className="col-md-8">
-                    <h1>Loading... Please wait</h1>
+                    <h1 style={{backgroundColor:'white'}}>Loading... Please wait</h1>
                   </div>
 
 
@@ -506,7 +578,7 @@ class Home extends Component {
     }
     if (!token) {
       return (
-        <div style={{backgroundColor:'#edb22a'}} className="col-lg-12">
+        <div style={{backgroundColor:'#edb22a'}} className="col-lg-12 frontimg">
           <br/>
           <br/>
           <br/>
@@ -522,7 +594,7 @@ class Home extends Component {
                     <p className="alert alert-info">{signInError}</p>
                   ) :(null)
                 }
-                <h3><span>Sign in</span></h3>
+                <h3 style={{textAlign:'center',color:'black',backgroundColor:'white'}}><span>Sign in</span></h3><br/>
                 <input className="form-control" type="email" placeholder="Email" value={signInEmail} onChange={this.onTextBoxChangeSignInEmail} /><br/>
                 <input className="form-control" type="password" placeholder="Password" value={signInPassword} onChange={this.onTextBoxChangeSignInPassword} /><br/>
                 <button className="btn btn-success" onClick={this.onSignIn}>Sign in</button>
@@ -537,7 +609,7 @@ class Home extends Component {
                     <p className="alert alert-info">{signUpError}</p>
                   ) :(null)
                 }
-                <h3><span>Sign up</span></h3>
+                <h3 style={{textAlign:'center',color:'black',backgroundColor:'white'}}><span>Sign up</span></h3><br/>
                 <input className="form-control" type="text" placeholder="First Name" value={signUpFirstName} onChange={this.onTextBoxChangeSignUpFirstName} /><br/>
                 <input className="form-control" type="text" placeholder="Last Name" value={signUpLastName} onChange={this.onTextBoxChangeSignUpLastName} /><br/>
                 <input className="form-control" type="text" placeholder="University ID" value={signUpUniversityId} onChange={this.onTextBoxChangeSignUpUniversityId} /><br/>
@@ -552,16 +624,207 @@ class Home extends Component {
       );
     }
 
+    if((userLevelState === 'admin') && (this.state.print === 'true')){
+      return (
+        <div style={{backgroundColor:'#c5e585'}} className='col-lg-12'><br/>
+
+          <br/><br/>
+          <div className="container-fluid">
+            <div className="col-md-4"> </div>
+            <div className="col-md-6">
+              <div className="col-sm-4">
+                <DatePicker className=" btn btn-Default btn-sm" isClearable={true} placeholderText="Select Date" selected={this.state.startDate} onChange={this.handleChange}/>
+              </div>
+              <div className="col-sm-4">
+              </div>
+            </div>
+            <div className="col-md-2"> </div>
+
+
+            {
+              (bookState) ? (<div>
+                  <div className='col-md-3'> </div>
+                  <div className='col-md-6'>
+                    <br/>
+                    <p className="alert alert-info">{bookState}</p>
+                  </div>
+                  <div className='col-md-3'> </div>
+                </div>
+              ) :(null)
+            }
+
+          </div>
+          <br/><br/><br/>
+          <div className="container-fluid">
+            <div className="col-md-1"> </div>
+            <div className="col-md-10">
+              {
+                this.state.labData.map(function(exp){
+                  return (
+                    <table style={{backgroundColor: '#eff9db'}} className="table btn-sm">
+                      <thead>
+                      <tr  style={{backgroundColor: 'white'}} >
+                        <th colSpan="4" style={{textAlign:'center'}} >LAB A</th><th colSpan="4" style={{textAlign:'center'}}>LAB B</th><th colSpan="4" style={{textAlign:'center'}} >LAB C</th>
+                      </tr>
+                      <tr style={{backgroundColor: '#f1ffdb'}}>
+                        <th style={{textAlign:'center'}} >Time</th><th style={{textAlign:'center'}}>Availability</th><th></th ><th className='table-info' style={{textAlign:'center'}}>Time</th><th style={{textAlign:'center'}}>Availability</th><th></th><th className='table-info' style={{textAlign:'center'}}>Time</th><th style={{textAlign:'center'}}>Availability</th><th></th>
+                      </tr>
+                      </thead>
+
+
+                      <tbody>
+                      <tr>
+                        <td>08.00-09.00</td>
+                        <td>{exp.lab_a.a}</td>
+
+
+                        <td></td>
+                        <td>08.00-09.00</td>
+                        <td>{exp.lab_b.a}</td>
+
+                        <td></td>
+                        <td>08.00-09.00</td>
+                        <td>{exp.lab_c.a}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>09.00-10.00</td>
+                        <td>{exp.lab_a.b}</td>
+
+                        <td></td>
+                        <td>09.00-10.00</td>
+                        <td>{exp.lab_b.b}</td>
+
+                        <td></td>
+                        <td>09.00-10.00</td>
+                        <td>{exp.lab_c.b}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>10.00-11.00</td>
+                        <td>{exp.lab_a.c}</td>
+
+                        <td></td>
+                        <td>10.00-11.00</td>
+                        <td>{exp.lab_b.c}</td>
+
+                        <td></td>
+                        <td>10.00-11.00</td>
+                        <td>{exp.lab_c.c}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td >11.00-12.00</td>
+                        <td>{exp.lab_a.d}</td>
+
+                        <td></td>
+                        <td>11.00-12.00</td>
+                        <td>{exp.lab_b.d}</td>
+
+                        <td></td>
+                        <td>11.00-12.00</td>
+                        <td>{exp.lab_c.d}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>12.00-01.00</td>
+                        <td>{exp.lab_a.e}</td>
+
+                        <td></td>
+                        <td>12.00-01.00</td>
+                        <td>{exp.lab_b.e}</td>
+
+                        <td></td>
+                        <td>12.00-01.00</td>
+                        <td>{exp.lab_c.e}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>01.00-02.00</td>
+                        <td>{exp.lab_a.f}</td>
+
+                        <td></td>
+                        <td>01.00-02.00</td>
+                        <td>{exp.lab_b.f}</td>
+
+                        <td></td>
+                        <td>01.00-02.00</td>
+                        <td>{exp.lab_c.f}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>02.00-03.00</td>
+                        <td>{exp.lab_a.g}</td>
+
+                        <td></td>
+                        <td>02.00-03.00</td>
+                        <td>{exp.lab_b.g}</td>
+
+                        <td></td>
+                        <td>02.00-03.00</td>
+                        <td>{exp.lab_c.g}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>03.00-04.00</td>
+                        <td>{exp.lab_a.h}</td>
+
+                        <td></td>
+                        <td>03.00-04.00</td>
+                        <td>{exp.lab_b.h}</td>
+
+                        <td></td>
+                        <td>03.00-04.00</td>
+                        <td>{exp.lab_c.h}</td>
+
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>04.00-05.00</td>
+                        <td>{exp.lab_a.i}</td>
+
+                        <td></td>
+                        <td>04.00-05.00</td>
+                        <td>{exp.lab_b.i}</td>
+
+                        <td></td>
+                        <td>04.00-05.00</td>
+                        <td>{exp.lab_c.i}</td>
+
+                        <td></td>
+                      </tr>
+
+                      </tbody>
+
+                    </table>
+                  )
+                }.bind(this))
+              }
+            </div>
+            <div className="col-md-1"> </div>
+
+          </div>
+        </div>
+      );
+    }
+
     if((userLevelState === 'admin') && (this.state.userSearch === 'false')){
       return (
-        <div style={{backgroundColor:'#dbc100'}} className='col-lg-12'><br/>
+        <div style={{backgroundColor:'#c5e585'}} className='col-lg-12'><br/>
           <div className="container-fluid">
-            <div style={{backgroundColor:'#7c4301'}} className='col-md-12'>
+            <div style={{backgroundColor:'black'}} className='col-md-12'>
               <div className="col-sm-3">
               </div>
               <div className="col-sm-6"> </div>
               <div className="col-sm-3">
-                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={print}>Today Report</label>
+                <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.printWindow}>Today Report</label>
                 <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.searchUser}>search User</label>
                 <label style={{backgroundColor:'white',border:'1px'}} className="btn btn-link" onClick={this.logout}>Logout</label>
 
@@ -583,6 +846,17 @@ class Home extends Component {
               </div>
 
             </div>
+            {
+              (bookState) ? (<div>
+                  <div className='col-md-3'> </div>
+                  <div className='col-md-6'>
+                    <br/>
+                    <p className="alert alert-info">{bookState}</p>
+                  </div>
+                  <div className='col-md-3'> </div>
+                </div>
+              ) :(null)
+            }
 
           </div>
           <br/><br/><br/>
@@ -937,9 +1211,9 @@ class Home extends Component {
 
     if((userLevelState === 'admin') && (this.state.userSearch === 'true')){
       return(
-        <div style={{backgroundColor:'#dbc100'}} className='col-lg-12' ><br/>
+        <div style={{backgroundColor:'#c5e585'}} className='col-lg-12' ><br/>
           <div className="container-fluid">
-            <div style={{backgroundColor:'#7c4301'}} className='col-md-12'>
+            <div style={{backgroundColor:'black'}} className='col-md-12'>
               <div className="col-sm-3">
 
               </div>
@@ -967,17 +1241,28 @@ class Home extends Component {
           <br/>
           <br/>
           <br/><br/>
+          {
+            (userDelete) ? (<div>
+              <div className='col-md-3'> </div>
+              <div className='col-md-6'>
+              <p className="alert alert-info">{userDelete}</p>
+              </div>
+                <div className='col-md-3'> </div>
+              </div>
+            ) :(null)
+          }
 
           {
             this.state.userData.map(function(exp){
               return (
-          <div className="container-fluid col-lg-12">
+          <div  className="container-fluid col-lg-12">
             <div className="col-md-3"> </div>
-            <div className="col-md-6 modal-content" style={{backgroundColor:'#f1ffdb'}}>
+            <div  className="col-md-6 modal-content" style={{backgroundColor:'#f1ffdb'}}>
               <br/><br/>
               <div className="col-sm-2"> </div>
               <div className="col-sm-10">
-                <div className='col-sm-12'>
+
+                <div  className='col-sm-12'>
                   <div className='col-sm-6'>
                     <h4><label className='label label-info'>first name  : </label></h4>
                   </div>
@@ -1017,6 +1302,16 @@ class Home extends Component {
                     <h4><label className='label label-default'>{exp.userLevel}</label></h4><br/>
                   </div>
                 </div>
+                <hr/>
+                <br/>
+                <div className='col-sm-12'>
+                  <div className='col-sm-6'>
+
+                  </div>
+                  <div className='col-sm-6'>
+                    <button className='btn btn-danger btn-sm' onClick={this.deleteUserData}>Delete User</button>
+                  </div>
+                </div>
 
 
 
@@ -1037,7 +1332,7 @@ class Home extends Component {
 
     if(userLevelState === 'user'){
       return (
-        <div style={{backgroundColor:'#dbc100'}} className="col-lg-12"><br/>
+        <div style={{backgroundColor:'#c5e585'}} className="col-lg-12"><br/>
           <div className="container-fluid">
 
             <div style={{backgroundColor:'black'}} className='col-md-12'>
@@ -1067,6 +1362,17 @@ class Home extends Component {
               </div>
 
             </div>
+            {
+              (bookState) ? (<div>
+                  <div className='col-md-3'> </div>
+                  <div className='col-md-6'>
+                    <br/>
+                    <p className="alert alert-info">{bookState}</p>
+                  </div>
+                  <div className='col-md-3'> </div>
+                </div>
+              ) :(null)
+            }
 
           </div>
           <br/><br/><br/>
