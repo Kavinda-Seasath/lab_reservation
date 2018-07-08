@@ -2,5 +2,5 @@
 
 module.exports = {
   db: 'mongodb://username:password@url:port/db',
-  db_dev: 'mongodb://admin:1234@localhost:27017/lab_reservation',
+  db_dev: 'mongodb://localhost:27017/lab_reservation',
 };
