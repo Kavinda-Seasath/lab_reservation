@@ -42,7 +42,7 @@
     "react-alert": "^4.0.4",
     "react-alert-template-basic": "^1.0.0",
     "react-datepicker": "^1.5.0",
-    "react-dom": "^16.4.1",
+    "react-dom": "^16.4.2",
     "react-hot-loader": "^4.0.0",
     "react-render-image": "^1.1.2",
     "react-router": "^4.2.0",
